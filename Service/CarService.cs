@@ -29,10 +29,6 @@ public class CarService(IUnitOfWork unitOfWork) : ICarService
         }
         var car = (Car)addCar;
         var cars = await _unitOfWork.CarRepository.GetAllAsync();
-        if (!car.IsValid())
-        {
-            throw new ArgumentException("Car is not valid");
-        }
         if (car.IsExist(cars))
         {
             throw new ArgumentException("Car already exist!");
@@ -46,7 +42,7 @@ public class CarService(IUnitOfWork unitOfWork) : ICarService
             throw new CustomException("Car's id looks not ObjectId");
         }
         var car = await _unitOfWork.CarRepository.GetByIdAsync(id);
-        if (car != null)
+        if (car == null)
         {
             throw new NotFoundException("Car was not found");
         }
@@ -59,30 +55,49 @@ public class CarService(IUnitOfWork unitOfWork) : ICarService
     }
     public async Task<CarDto> GetCarById(string id)
     {
-        var car = await _unitOfWork.CarRepository.GetByIdAsync(id);
-        if(car != null)
+        if (!ObjectId.TryParse(id, out ObjectId objectId))
         {
-            throw new NotFoundException("Car was not found");
+            throw new CustomException("Car's id does not look like a valid ObjectId");
         }
-        return car;
+
+        var car = await _unitOfWork.CarRepository.GetByIdAsync(id);
+        if (car == null)
+        {
+            throw new NotFoundException("Car not found");
+        }
+
+        return (CarDto)car;
     }
+
     public async Task UpdateCar(CarDto carDto)
     {
+        if (carDto == null)
+        {
+            throw new ArgumentNullException(nameof(carDto), "CarDto cannot be null");
+        }
+
         var id = carDto.Id;
-        if(!ObjectId.TryParse(id, out ObjectId objectId))
+        if (!ObjectId.TryParse(id, out ObjectId objectId))
         {
-            throw new CustomException("Car's id looks not ObjectId");
+            throw new CustomException("Car's id does not look like a valid ObjectId");
         }
-        if(carDto is null)
+
+        var car = await _unitOfWork.CarRepository.GetByIdAsync(id);
+        if (car == null)
         {
-            throw new ArgumentNullException("Car can not be null");
+            throw new NotFoundException("Car not found");
         }
-        var car1 = await _unitOfWork.CarRepository.GetByIdAsync(id);
-        var car = (Car)car1;
+
+        car.Brand = carDto.Brand;
+        car.Name = carDto.Name;
+        car.Price = carDto.Price;
+        car.ImageUrl = carDto.ImageUrl;
+
         if (!car.IsValid())
         {
             throw new CustomException("Car is not valid");
         }
+
         await _unitOfWork.CarRepository.UpdateAsync(car);
     }
 }

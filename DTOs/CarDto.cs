@@ -14,6 +14,7 @@ public class CarDto : BaseDto
             Brand = car.Brand,
             Name = car.Name,
             Price = car.Price,
-            ImageUrl = car.ImageUrl
+            ImageUrl = car.ImageUrl,
+            Id = car.Id
         };
 }

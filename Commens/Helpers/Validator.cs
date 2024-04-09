@@ -8,5 +8,5 @@ public static class Validator
                                     && c.Name == car.Name);
     public static bool IsValid(this Car car)
         => !string.IsNullOrEmpty(car.Name)
-        && string.IsNullOrEmpty(car.Brand);
+        && !string.IsNullOrEmpty(car.Brand);
 }

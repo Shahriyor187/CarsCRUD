@@ -11,7 +11,7 @@ public class CarsController(ICarService carService) : ControllerBase
 {
     private readonly ICarService _carService = carService;
     [HttpGet("get-all-cars")]
-    [Authorize(Roles = "SuperAdmin, Admin")]
+    //[Authorize(Roles = "SuperAdmin, Admin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -37,8 +37,8 @@ public class CarsController(ICarService carService) : ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError, $"An error occurred while processing the request: {ex.Message}");
         }
     }
-    [HttpGet("get-by-id-car{id}")]
-    [Authorize(Roles = "SuperAdmin, Admin")]
+    [HttpGet("get-by-id-car")]
+    //[Authorize(Roles = "SuperAdmin, Admin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -65,7 +65,7 @@ public class CarsController(ICarService carService) : ControllerBase
         }
     }
     [HttpPost("add-car")]
-    [Authorize(Roles = "SuperAdmin, Admin")]
+    //[Authorize(Roles = "SuperAdmin, Admin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -92,7 +92,7 @@ public class CarsController(ICarService carService) : ControllerBase
         }
     }
     [HttpPut("update-car")]
-    [Authorize(Roles = "SuperAdmin, Admin")]
+    //[Authorize(Roles = "SuperAdmin, Admin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -118,8 +118,8 @@ public class CarsController(ICarService carService) : ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError, $"An error occurred while processing the request: {ex.Message}");
         }
     }
-    [HttpDelete("delete-car{id}")]
-    [Authorize(Roles = "SuperAdmin, Admin")]
+    [HttpDelete("delete-car")]
+    //[/*Authorize(Roles = "SuperAdmin, Admin")]*/
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
