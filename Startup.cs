@@ -153,8 +153,8 @@ public static class Startup
         services.AddScoped<ICarRepository, CarRepository>();
         services.AddScoped<IAdminService, AdminService>();
         services.AddTransient<ICarService, CarService>();
+        services.AddScoped<IUserRegisterService, UserRegisterService>();
         #endregion
-
     }
 
     public static void Configure(this IApplicationBuilder app, IWebHostEnvironment env)
