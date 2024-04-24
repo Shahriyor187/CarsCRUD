@@ -1,7 +1,7 @@
 ﻿using CarsCRUD.AuthDTOs;
 using CarsCRUD.Commens;
 using CarsCRUD.Commens.Exceptions;
-using CarsCRUD.Entity;
+using CarsCRUD.Commens.Helpers;
 using CarsCRUD.Interfaces;
 using CarsCRUD.InterfacesForRepositories;
 using CarsCRUD.Roles;
@@ -34,6 +34,44 @@ public class AdminService(IConfiguration configuration,
         var result = await _userManager.DeleteAsync(user);
         if (!result.Succeeded)
             throw new ValidationException("Failed to delete user");
+    }
+
+    public async Task<LoginResponse> LoginAdminAsync(LoginRequest request)
+    {
+        var user = await _userManager.FindByEmailAsync(request.Email);
+        if (user == null)
+            throw new NotFoundException("User not found");
+
+        var passwordValid = await _userManager.CheckPasswordAsync(user, request.Password);
+        if (!passwordValid)
+            throw new CustomException("Invalid email/password");
+
+        var roles = await _userManager.GetRolesAsync(user);
+        if (!roles.Contains(IdentityRoles.ADMIN))
+            throw new CustomException("User is not an admin");
+
+        var tokenString = JwtHelper.GenerateJwtToken(user, roles, _configuration);
+
+        return new LoginResponse { Success = true, AccessToken = tokenString };
+    }
+
+    public async Task<LoginResponse> LoginSuperAdminAsync(LoginRequest request)
+    {
+        var user = await _userManager.FindByEmailAsync(request.Email);
+        if (user == null)
+            throw new NotFoundException("User not found");
+
+        var passwordValid = await _userManager.CheckPasswordAsync(user, request.Password);
+        if (!passwordValid)
+            throw new CustomException("Invalid email/password");
+
+        var roles = await _userManager.GetRolesAsync(user);
+        if (!roles.Contains(IdentityRoles.SUPER_ADMIN))
+            throw new CustomException("User is not a super admin");
+
+        var tokenString = JwtHelper.GenerateJwtToken(user, roles, _configuration);
+
+        return new LoginResponse { Success = true, AccessToken = tokenString };
     }
 
     public async Task<RegisterResponse> RegisterAdminAsync(RegistrationRequest request)
